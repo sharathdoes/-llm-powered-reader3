@@ -4,40 +4,178 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ book.metadata.title }}</title>
+
     <style>
-        /* Layout */
-        body { margin: 0; padding: 0; display: flex; height: 100vh; overflow: hidden; font-family: "Georgia", serif; background: #fff; }
+        body { 
+            margin: 0; 
+            padding: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #ffffff;
+        }
 
         /* Sidebar */
-        #sidebar { width: 300px; background: #f8f9fa; border-right: 1px solid #e9ecef; overflow-y: auto; padding: 20px; flex-shrink: 0; }
-        .nav-header { font-family: -apple-system, sans-serif; font-weight: bold; color: #495057; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #dee2e6; }
-        .nav-home { display: block; margin-bottom: 20px; color: #3498db; text-decoration: none; font-family: -apple-system, sans-serif; font-size: 0.9em; }
+        #sidebar { 
+            width: 300px; 
+            background: #f8f9fa; 
+            border-right: 1px solid #e9ecef; 
+            overflow-y: auto; 
+            padding: 20px; 
+            flex-shrink: 0; 
+        }
 
-        /* TOC Tree */
+        .nav-header { 
+            font-weight: 600; 
+            color: #444; 
+            margin-bottom: 15px; 
+            padding-bottom: 10px; 
+            border-bottom: 1px solid #dee2e6; 
+        }
+
+        .nav-home { 
+            display: block; 
+            margin-bottom: 20px; 
+            color: #007aff; 
+            text-decoration: none; 
+            font-size: 0.9em; 
+        }
+
         ul.toc-list { list-style: none; padding-left: 0; margin: 0; }
-        ul.toc-list ul { padding-left: 20px; } /* Indent children */
+        ul.toc-list ul { padding-left: 20px; }
         li.toc-item { margin-bottom: 8px; }
-        a.toc-link { text-decoration: none; color: #495057; font-size: 0.95em; display: block; padding: 4px 0; line-height: 1.4; }
-        a.toc-link:hover { color: #000; text-decoration: underline; }
-        a.toc-link.active { color: #d63384; font-weight: bold; }
+        a.toc-link { 
+            color: #444; 
+            text-decoration: none; 
+            padding: 4px 0; 
+            display: block; 
+        }
+        a.toc-link:hover { color: #000; }
+        a.toc-link.active { color: #ff2d55; font-weight: 600; }
 
-        /* Main Content */
+        /* Main content */
         #main { flex-grow: 1; overflow-y: auto; position: relative; scroll-behavior: smooth; }
-        .content-container { max-width: 700px; margin: 0 auto; padding: 60px 40px; line-height: 1.8; font-size: 1.15em; color: #212529; }
+        .content-container { 
+            max-width: 700px; 
+            margin: 0 auto; 
+            padding: 60px 40px; 
+            line-height: 1.7; 
+            font-size: 1.12em; 
+            color: #222; 
+        }
 
-        /* Content Styling (Basic normalization for the book HTML) */
-        .book-content img { max-width: 100%; height: auto; display: block; margin: 20px auto; }
-        .book-content h1, .book-content h2, .book-content h3 { font-family: -apple-system, sans-serif; margin-top: 1.5em; color: #333; }
+        .book-content img { max-width: 100%; margin: 20px auto; display: block; }
+        .book-content h1, .book-content h2, .book-content h3 { 
+            margin-top: 1.5em; 
+            color: #333; 
+        }
+
         .book-content p { margin-bottom: 1.5em; text-align: justify; }
 
-        /* Navigation Footer */
-        .chapter-nav { display: flex; justify-content: space-between; margin-top: 60px; padding-top: 20px; border-top: 1px solid #eee; font-family: -apple-system, sans-serif; }
-        .nav-btn { text-decoration: none; color: #3498db; font-weight: bold; padding: 10px 20px; border: 1px solid #3498db; border-radius: 4px; transition: all 0.2s; }
-        .nav-btn:hover { background: #3498db; color: white; }
-        .nav-btn.disabled { opacity: 0.5; pointer-events: none; border-color: #ccc; color: #ccc; }
+        .chapter-nav { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-top: 60px; 
+            padding-top: 20px; 
+            border-top: 1px solid #eee; 
+        }
 
+        .nav-btn { 
+            color: #007aff; 
+            text-decoration: none; 
+            padding: 10px 20px; 
+            border-radius: 6px; 
+            border: 1px solid #007aff; 
+            transition: 0.2s; 
+            font-weight: 500;
+        }
+
+        .nav-btn:hover { background: #007aff; color: white; }
+        .nav-btn.disabled { opacity: 0.4; pointer-events: none; }
+
+        /* ---------- Apple Minimal Chat Box ---------- */
+        #chatbox {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 320px;
+            background: #ffffffee;
+            backdrop-filter: saturate(180%) blur(20px);
+            border: 1px solid #e5e5e5;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        #chat-header {
+            padding: 12px 16px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #111;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        #messages {
+            height: 230px;
+            overflow-y: auto;
+            padding: 12px;
+            font-size: 14px;
+            color: #222;
+        }
+
+        .bubble-user {
+            background: #007aff;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 14px;
+            margin: 8px 0;
+            max-width: 80%;
+            margin-left: auto;
+            display: inline-block;
+        }
+
+        .bubble-bot {
+            background: #f2f2f7;
+            color: #333;
+            padding: 8px 12px;
+            border-radius: 14px;
+            margin: 8px 0;
+            max-width: 80%;
+            display: inline-block;
+        }
+
+        #chat-input-area {
+            display: flex;
+            gap: 8px;
+            padding: 10px;
+            border-top: 1px solid #eaeaea;
+            background: white;
+        }
+
+        #chatInput {
+            flex: 1;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        #sendBtn {
+            padding: 10px 14px;
+            background: #007aff;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        #sendBtn:hover { background: #0063d6; }
     </style>
 </head>
+
 <body>
 
     <!-- SIDEBAR -->
@@ -45,56 +183,29 @@
         <a href="/" class="nav-home">← Back to Library</a>
         <div class="nav-header">{{ book.metadata.title }}</div>
 
-        <!-- Recursive Macro for TOC -->
         {% macro render_toc(items) %}
-            <ul class="toc-list">
+        <ul class="toc-list">
             {% for item in items %}
-                <li class="toc-item">
-                    <!--
-                        Matching Logic:
-                        If the TOC item filename matches the current chapter filename, mark active.
-                        Ideally we match spine indices, but Reader 3 TOC maps to filenames.
-                        We use a simple hash matching logic here.
-                    -->
-                    {% set is_active = current_chapter.href == item.file_href %}
+            <li class="toc-item">
+                {% set is_active = current_chapter.href == item.file_href %}
 
-                    <!--
-                       We need to find which linear chapter index (0, 1, 2) corresponds
-                       to this TOC entry file.
-                       Since that's hard to calculate in Jinja, we just link to the
-                       file anchor. BUT, to make our linear navigation work, we
-                       rely on the fact that the user is currently reading 'chapter_index'.
+                <a href="#" onclick="findAndGo('{{ item.file_href }}')" 
+                   class="toc-link {% if is_active %}active{% endif %}">
+                    {{ item.title }}
+                </a>
 
-                       Ideally, clicking a TOC link should find the 'index' of that file.
-                       For simplicity in this version: We link to the 'href' (filename)
-                       and let JavaScript or Backend handle it?
-
-                       Actually, let's just link to the file. The browser interprets #anchors.
-                       However, our router uses /read/book/INDEX.
-
-                       SIMPLE FIX: We won't link the TOC to the route index in this simple version
-                       unless we build a map. We will visually show structure,
-                       but rely on "Previous/Next" for linear reading.
-
-                       BETTER FIX: Use JavaScript to match filenames.
-                    -->
-                    <a href="#" onclick="findAndGo('{{ item.file_href }}')"
-                       class="toc-link {% if is_active %}active{% endif %}">
-                        {{ item.title }}
-                    </a>
-
-                    {% if item.children %}
-                        {{ render_toc(item.children) }}
-                    {% endif %}
-                </li>
+                {% if item.children %}
+                {{ render_toc(item.children) }}
+                {% endif %}
+            </li>
             {% endfor %}
-            </ul>
+        </ul>
         {% endmacro %}
 
         {{ render_toc(book.toc) }}
     </div>
 
-    <!-- MAIN CONTENT -->
+    <!-- MAIN -->
     <div id="main">
         <div class="content-container">
             <div class="book-content">
@@ -103,27 +214,80 @@
 
             <div class="chapter-nav">
                 {% if prev_idx is not none %}
-                    <a href="/read/{{ book_id }}/{{ prev_idx }}" class="nav-btn">← Previous</a>
+                <a href="/read/{{ book_id }}/{{ prev_idx }}" class="nav-btn">← Previous</a>
                 {% else %}
-                    <span class="nav-btn disabled">← Previous</span>
+                <span class="nav-btn disabled">← Previous</span>
                 {% endif %}
 
-                <span style="color: #999; padding: 10px;">
-                    Section {{ chapter_index + 1 }} of {{ book.spine|length }}
-                </span>
+                <span style="color: #888;">Section {{ chapter_index + 1 }} of {{ book.spine|length }}</span>
 
                 {% if next_idx is not none %}
-                    <a href="/read/{{ book_id }}/{{ next_idx }}" class="nav-btn">Next →</a>
+                <a href="/read/{{ book_id }}/{{ next_idx }}" class="nav-btn">Next →</a>
                 {% else %}
-                    <span class="nav-btn disabled">Next →</span>
+                <span class="nav-btn disabled">Next →</span>
                 {% endif %}
             </div>
         </div>
     </div>
 
+    <!-- CHATBOX -->
+    <div id="chatbox">
+        <div id="chat-header">Chat with Groq</div>
+
+        <div id="messages"></div>
+
+        <div id="chat-input-area">
+            <input id="chatInput" placeholder="Message…" />
+            <button id="sendBtn" onclick="sendMessage()">➤</button>
+        </div>
+    </div>
+
     <script>
-        // Helper to map TOC filenames to Spine Indices
-        // Pass the spine data from python to JS
+        async function sendMessage() {
+            const input = document.getElementById("chatInput");
+            const text = input.value.trim();
+            if (!text) return;
+
+            const messages = document.getElementById("messages");
+
+            // User bubble
+            const userBubble = document.createElement("div");
+            userBubble.className = "bubble-user";
+            userBubble.textContent = text;
+            messages.appendChild(userBubble);
+
+            messages.scrollTop = messages.scrollHeight;
+
+            input.value = "";
+
+            // Fetch stream
+            const response = await fetch("/chat-stream", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: text })
+            });
+
+            const botBubble = document.createElement("div");
+            botBubble.className = "bubble-bot";
+            messages.appendChild(botBubble);
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+
+                botBubble.textContent += decoder.decode(value);
+                messages.scrollTop = messages.scrollHeight;
+            }
+        }
+
+        document.getElementById("chatInput").addEventListener("keydown", e => {
+            if (e.key === "Enter") sendMessage();
+        });
+
+        /* TOC Mapping */
         const spineMap = {
             {% for ch in book.spine %}
             "{{ ch.href }}": {{ ch.order }},
@@ -131,24 +295,13 @@
         };
 
         function findAndGo(filename) {
-            // The TOC usually has specific filenames e.g. "text/part001.html"
-            // Sometimes it has anchors "text/part001.html#header"
-            // We strip the anchor to find the page index
-            const cleanFile = filename.split('#')[0];
-            const anchor = filename.split('#')[1];
-
-            const idx = spineMap[cleanFile];
-
+            const clean = filename.split("#")[0];
+            const idx = spineMap[clean];
             if (idx !== undefined) {
-                let url = "/read/{{ book_id }}/" + idx;
-                // If there was an anchor, we could try to scroll to it,
-                // but simple page loads often lose anchor position without extra JS.
-                // Let's just go to the page.
-                window.location.href = url;
-            } else {
-                console.log("Could not find index for", filename);
+                window.location.href = "/read/{{ book_id }}/" + idx;
             }
         }
     </script>
+
 </body>
 </html>

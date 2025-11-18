@@ -2,16 +2,50 @@ import os
 import pickle
 from functools import lru_cache
 from typing import Optional
-
+from groq import Groq
+from pydantic import BaseModel
+import dotenv
+dotenv.load_dotenv()
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import StreamingResponse
+
 
 from reader3 import Book, BookMetadata, ChapterContent, TOCEntry
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
+
+class ChatRequest(BaseModel):
+    message: str
+
+client = Groq(api_key=os.getenv("GROQ_KEY"))
+
+@app.post("/chat-stream")
+async def chat_stream(req: ChatRequest):
+    def generate():
+        stream = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            stream=True,
+            messages=[{"role": "user", "content": req.message}],
+        )
+
+        for chunk in stream:
+            if chunk.choices and chunk.choices[0].delta:
+                delta = chunk.choices[0].delta.content
+
+                if delta:
+                    # Groq may return list or string
+                    if isinstance(delta, list):
+                        for item in delta:
+                            if "text" in item:
+                                yield item["text"]
+                    else:
+                        yield delta
+
+    return StreamingResponse(generate(), media_type="text/plain")
 
 # Where are the book folders located?
 BOOKS_DIR = "."
